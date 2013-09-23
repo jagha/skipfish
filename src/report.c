@@ -105,7 +105,7 @@ static void sort_annotate_pivot(struct pivot_desc* pv) {
 
   for (i=0;i<pv->child_cnt;i++) {
     if (pv->child[i]->type == PIVOT_FILE || pv->child[i]->type == PIVOT_DIR) path_child = 1;
-    sort_annotate_pivot(pv->child[i]); 
+    sort_annotate_pivot(pv->child[i]);
   }
 
   if (pv->type != PIVOT_DIR && pv->type != PIVOT_SERV &&
@@ -117,7 +117,7 @@ static void sort_annotate_pivot(struct pivot_desc* pv) {
 
   if (pv->fuzz_par == -1 && pv->res &&
       (pv->res->sniff_mime_id < MIME_IMG_JPEG ||
-      pv->res->sniff_mime_id > MIME_AV_WMEDIA) && 
+      pv->res->sniff_mime_id > MIME_AV_WMEDIA) &&
       (pv->type == PIVOT_DIR || pv->type == PIVOT_FILE ||
       pv->type == PIVOT_PATHINFO) && !pv->missing) {
     i = strlen((char*)pv->name);
@@ -135,10 +135,10 @@ static void sort_annotate_pivot(struct pivot_desc* pv) {
       (((q1 = (u8*)strchr((char*)pv->req->par.v[pv->fuzz_par], '(')) &&
         (q2 = (u8*)strchr((char*)pv->req->par.v[pv->fuzz_par], ')')) && q1 < q2 &&
          !isdigit(q1[1])) ||
-      ((inl_strcasestr(pv->req->par.v[pv->fuzz_par], (u8*)"SELECT ") || 
+      ((inl_strcasestr(pv->req->par.v[pv->fuzz_par], (u8*)"SELECT ") ||
         inl_strcasestr(pv->req->par.v[pv->fuzz_par], (u8*)"DELETE ") ) &&
         inl_strcasestr(pv->req->par.v[pv->fuzz_par], (u8*)" FROM ")) ||
-      (inl_strcasestr(pv->req->par.v[pv->fuzz_par], (u8*)"UPDATE ") || 
+      (inl_strcasestr(pv->req->par.v[pv->fuzz_par], (u8*)"UPDATE ") ||
       inl_strcasestr(pv->req->par.v[pv->fuzz_par], (u8*)" WHERE ")) ||
       inl_strcasestr(pv->req->par.v[pv->fuzz_par], (u8*)"DROP TABLE ") ||
       inl_strcasestr(pv->req->par.v[pv->fuzz_par], (u8*)" ORDER BY ")))
@@ -184,7 +184,7 @@ static inline u32 hash_extra(u8* str) {
 /* Registers a new pivot signature, or updates an existing one. */
 
 static void maybe_add_sig(struct pivot_desc* pv) {
-  u32 i, issue_sig = ~(pv->issue_cnt | (pv->desc_issue_cnt << 16)), 
+  u32 i, issue_sig = ~(pv->issue_cnt | (pv->desc_issue_cnt << 16)),
          child_sig = ~(pv->desc_cnt | (pv->child_cnt << 16));
 
   if (!pv->res) return;
@@ -192,13 +192,13 @@ static void maybe_add_sig(struct pivot_desc* pv) {
   /* Compute a rough children node signature based on children types. */
 
   for (i=0;i<pv->child_cnt;i++)
-    child_sig ^= (hash_extra(pv->child[i]->name) ^ 
+    child_sig ^= (hash_extra(pv->child[i]->name) ^
                   pv->child[i]->type) << (i % 16);
 
   /* Do the same for all recorded issues. */
 
   for (i=0;i<pv->issue_cnt;i++)
-    issue_sig ^= (hash_extra(pv->issue[i].extra) ^ 
+    issue_sig ^= (hash_extra(pv->issue[i].extra) ^
                  pv->issue[i].type) << (i % 16);
 
   /* Assign a simplified signature to the pivot. */
@@ -267,7 +267,7 @@ void destroy_signatures(void) {
     ck_free(m_samp[i].res);
   }
 
-  for (i=0;i<i_samp_cnt;i++) 
+  for (i=0;i<i_samp_cnt;i++)
     ck_free(i_samp[i].i);
 
   ck_free(m_samp);
@@ -351,9 +351,9 @@ static void output_scan_info(u64 scan_time, u32 seed) {
   f = fopen("summary.js", "w");
   if (!f) PFATAL("Cannot open 'summary.js'");
 
-  fprintf(f, "var sf_version = '%s';\n", VERSION);
-  fprintf(f, "var scan_date  = '%s';\n", js_escape(ct, 0));
-  fprintf(f, "var scan_seed  = '0x%08x';\n", seed);
+  fprintf(f, "var sf_version = \"%s\";\n", VERSION);
+  fprintf(f, "var scan_date  = \"%s\";\n", js_escape(ct, 0));
+  fprintf(f, "var scan_seed  = \"0x%08x\";\n", seed);
   fprintf(f, "var scan_ms    = %llu;\n", (long long)scan_time);
 
   fclose(f);
@@ -369,7 +369,7 @@ static void describe_res(FILE* f, struct http_response* res) {
     fprintf(f, "'fetched': false, 'error': 'Content not fetched'");
     return;
   }
-  
+
   switch (res->state) {
 
     case 0 ... STATE_OK - 1:
@@ -381,9 +381,9 @@ static void describe_res(FILE* f, struct http_response* res) {
                  res->code, res->pay_len,
                  js_escape(res->header_mime, 0));
 
-      fprintf(f, "'sniff_mime': '%s', 'cset': '%s'", 
+      fprintf(f, "'sniff_mime': '%s', 'cset': '%s'",
                  res->sniffed_mime ? res->sniffed_mime : (u8*)"[none]",
-                 js_escape(res->header_charset ? res->header_charset 
+                 js_escape(res->header_charset ? res->header_charset
                  : res->meta_charset, 0));
       break;
 
@@ -496,12 +496,12 @@ static void save_req_res(struct http_request* req, struct http_response* res, u8
 
     /* Collect samples */
     if (sample) collect_samples(req, res);
-   
+
     /* And done! */
     return;
   }
 
- 
+
   /* Getting here means we need to write down the request and
      response. This is typically required upon when we flush data from
      pivots that are DONE or upon report writing. */
@@ -516,7 +516,7 @@ static void save_req_res(struct http_request* req, struct http_response* res, u8
   f = fopen("request.js", "w");
   if (!f) PFATAL("Cannot create 'request.js'");
 
-  fprintf(f, "var req = {'data':'%s'}", js_escape(rd, 0));
+  fprintf(f, "var req = {\"data\":\"%s\"}", js_escape(rd, 0));
   fclose(f);
 
   ck_free(rd);
@@ -552,7 +552,7 @@ static void save_req_res(struct http_request* req, struct http_response* res, u8
 
     f = fopen("response.js", "w");
     if (!f) PFATAL("Cannot create 'response.js'");
-    fprintf(f, "var res = {'data':'%s'}", js_escape(rs, 0));
+    fprintf(f, "var res = {\"data\":\"%s\"}", js_escape(rs, 0));
     fclose(f);
 
     ck_free(rs);
@@ -664,7 +664,7 @@ static void output_crawl_tree(struct pivot_desc* pv) {
     u8 tmp[32];
     u8* p;
 
-    if (suppress_dupes && pv->child[i]->dupe && 
+    if (suppress_dupes && pv->child[i]->dupe &&
         !pv->child[i]->total_child_cnt) continue;
 
     /* Also completely suppress nodes that seem identical to the
@@ -679,26 +679,26 @@ static void output_crawl_tree(struct pivot_desc* pv) {
 
     sprintf((char*)tmp, "c%u", i);
 
-    fprintf(f, "  { 'dupe': %s, 'type': %u, 'name': '%s%s",
+    fprintf(f, "  { \"dupe\": %s, \"type\": %u, \"name\": \"%s%s",
             pv->child[i]->dupe ? "true" : "false",
             pv->child[i]->type, js_escape(pv->child[i]->name, 0),
             (pv->child[i]->fuzz_par == -1 || pv->child[i]->type == PIVOT_VALUE)
             ? (u8*)"" : (u8*)"=");
 
-    fprintf(f, "%s', 'dir': '%s', 'linked': %d, ",
+    fprintf(f, "%s\", \"dir\": \"%s\", \"linked\": %d, ",
             (pv->child[i]->fuzz_par == -1 || pv->child[i]->type == PIVOT_VALUE)
             ? (u8*)"" :
             js_escape(pv->child[i]->req->par.v[pv->child[i]->fuzz_par], 0),
             tmp, pv->child[i]->linked);
 
     p = serialize_path(pv->child[i]->req, 1, 1);
-    fprintf(f, "'url': '%s', ", js_escape(p, 0));
+    fprintf(f, "\"url\": \"%s\", ", js_escape(p, 0));
     ck_free(p);
 
     describe_res(f, pv->child[i]->res);
 
-    fprintf(f,", 'missing': %s, 'csens': %s, 'child_cnt': %u, "
-            "'issue_cnt': [ %u, %u, %u, %u, %u ], 'sig': 0x%x }%s\n", 
+    fprintf(f,", \"missing\": %s, \"csens\": %s, \"child_cnt\": %u, "
+            "\"issue_cnt\": [ %u, %u, %u, %u, %u ], \"sig\": 0x%x }%s\n",
             pv->child[i]->missing ? "true" : "false",
             pv->child[i]->csens ? "true" : "false",
             pv->child[i]->total_child_cnt, pv->child[i]->total_issues[1],
@@ -722,13 +722,13 @@ static void output_crawl_tree(struct pivot_desc* pv) {
     u8 tmp[32];
     sprintf((char*)tmp, "i%u", i);
 
-    fprintf(f, "  { 'severity': %u, 'type': %u, 'sid': '%d', 'extra': '%s', ",
+    fprintf(f, "  { \"severity\": %u, \"type\": %u, \"sid\": \"%d\", \"extra\": \"%s\", ",
             PSEV(pv->issue[i].type) - 1, pv->issue[i].type, pv->issue[i].sid,
             pv->issue[i].extra ? js_escape(pv->issue[i].extra, 0) : (u8*)"");
 
     describe_res(f, pv->issue[i].res);
 
-    fprintf(f, ", 'dir': '%s' }%s\n",
+    fprintf(f, ", \"dir\": \"%s\" }%s\n",
             tmp, (i == pv->issue_cnt - 1) ? "" : ",");
 
     if (mkdir((char*)tmp, 0755)) PFATAL("Cannot create '%s'.", tmp);
@@ -814,7 +814,7 @@ static void output_summary_views() {
     if (mkdir((char*)tmp, 0755)) PFATAL("Cannot create '%s'.", tmp);
     if (chdir((char*)tmp)) PFATAL("chdir unexpectedly fails!");
 
-    fprintf(f, "  { 'mime': '%s', 'samples': [\n", m_samp[i].det_mime);
+    fprintf(f, "  { \"mime\": \"%s\", \"samples\": [\n", m_samp[i].det_mime);
 
     for (c=0;c<use_samp;c++) {
       u8 tmp2[32];
@@ -824,7 +824,7 @@ static void output_summary_views() {
       if (chdir((char*)tmp2)) PFATAL("chdir unexpectedly fails!");
       save_req_res(m_samp[i].req[c], m_samp[i].res[c], 0);
       if (chdir("..")) PFATAL("chdir unexpectedly fails!");
-      fprintf(f, "    { 'url': '%s', 'dir': '%s/%s', 'linked': %d, 'len': %d"
+      fprintf(f, "    { \"url\": \"%s\", \"dir\": \"%s/%s\", \"linked\": %d, \"len\": %d"
               " }%s\n", js_escape(p, 0), tmp, tmp2,
               m_samp[i].req[c]->pivot->linked, m_samp[i].res[c]->pay_len,
               (c == use_samp - 1) ? " ]" : ",");
@@ -849,7 +849,7 @@ static void output_summary_views() {
     if (mkdir((char*)tmp, 0755)) PFATAL("Cannot create '%s'.", tmp);
     if (chdir((char*)tmp)) PFATAL("chdir unexpectedly fails!");
 
-    fprintf(f, "  { 'severity': %d, 'type': %d, 'samples': [\n", 
+    fprintf(f, "  { \"severity\": %d, \"type\": %d, \"samples\": [\n",
             PSEV(i_samp[i].type) - 1, i_samp[i].type);
 
     for (c=0;c<use_samp;c++) {
@@ -860,10 +860,10 @@ static void output_summary_views() {
       if (chdir((char*)tmp2)) PFATAL("chdir unexpectedly fails!");
       save_req_res(i_samp[i].i[c]->req, i_samp[i].i[c]->res, 0);
       if (chdir("..")) PFATAL("chdir unexpectedly fails!");
-      fprintf(f, "    { 'url': '%s', ", js_escape(p, 0));
-      fprintf(f, "'extra': '%s', 'sid': '%d', 'dir': '%s/%s' }%s\n", 
-              i_samp[i].i[c]->extra ? js_escape(i_samp[i].i[c]->extra, 0) : 
-              (u8*)"", i_samp[i].i[c]->sid, tmp, tmp2, 
+      fprintf(f, "    { \"url\": \"%s\", ", js_escape(p, 0));
+      fprintf(f, "\"extra\": \"%s\", \"sid\": \"%d\", \"dir\": \"%s/%s\" }%s\n",
+              i_samp[i].i[c]->extra ? js_escape(i_samp[i].i[c]->extra, 0) :
+              (u8*)"", i_samp[i].i[c]->sid, tmp, tmp2,
               (c == use_samp - 1) ? " ]" : ",");
       ck_free(p);
     }
@@ -898,9 +898,9 @@ static int copy_asset(const struct dirent* d) {
 
   if (i >= 0 && o >= 0) {
     s32 c;
-    while ((c = read(i, buf, 1024)) > 0) 
+    while ((c = read(i, buf, 1024)) > 0)
       if (write(o, buf, c) != c) break;
-  } 
+  }
 
   close(i);
   close(o);
@@ -975,7 +975,7 @@ static void save_pivots(FILE* f, struct pivot_desc* cur) {
       fprintf(f, "dup=%u %s%scode=%u len=%u notes=%u sig=0x%x\n", cur->dupe,
              cur->bogus_par ? "bogus " : "",
              cur->missing ? "returns_404 " : "",
-             cur->res->code, cur->res->pay_len, 
+             cur->res->code, cur->res->pay_len,
              cur->issue_cnt, cur->pv_sig);
     else
       fprintf(f, "not_fetched\n");
