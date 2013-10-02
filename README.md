@@ -1,4 +1,4 @@
 skipfish
 ========
 
-unofficial mirrpr of skipfish with some minor fixes
+unofficial mirror of skipfish with some minor fixes to output valid json
